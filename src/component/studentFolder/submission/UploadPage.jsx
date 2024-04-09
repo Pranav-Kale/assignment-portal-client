@@ -1,8 +1,13 @@
-import React,{useState} from 'react';
+import React,{useContext, useState} from 'react';
 import { SlCloudUpload } from "react-icons/sl";
 import { Link } from 'react-router-dom';
+import { IoMdCloudDone } from "react-icons/io";
+import { useParams } from 'react-router-dom';
+import { UserContext } from '../../../store/userContext';
 
 function UploadPage({setOpenUploadPage}) {
+  const {user} = useContext(UserContext);
+  const {id} = useParams();
     
   const [file, setFile] = useState(null);
   const [displayFile, setDisplayFile] = useState(null);
@@ -28,11 +33,12 @@ function UploadPage({setOpenUploadPage}) {
       const formData = new FormData();
       formData.append("file", file);
       formData.append("title", title);
+      formData.append("studentId", user._id);
   
       try {
         const response = await fetch(
 
-          "https://assignment-portal-server.onrender.com/api/assignment?role=teacher",
+          `https://assignment-portal-server.onrender.com/api/assignment/submitassignment/${id}?role=student`,
 
           {
             method: "POST",
@@ -70,7 +76,7 @@ function UploadPage({setOpenUploadPage}) {
           onDragLeave={handleDragLeave}
         >
           <div className="flex flex-col items-center justify-center h-full gap-2">
-            <i className="text-5xl"><SlCloudUpload /></i>
+            <i className="text-5xl">{!file ? <SlCloudUpload /> : <IoMdCloudDone />}</i>
             <div className="text-center">Drag and drop your file here</div>
             <span className="mb-3">OR</span>
             <div className="">

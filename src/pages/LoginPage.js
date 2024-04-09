@@ -2,31 +2,43 @@ import axios from "axios";
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import RegisterImg from "../assets/login.avif";
+import { useNavigate } from "react-router-dom";
+import Cookies from 'js-cookie';
 
-const LoginPage = () => {
+const LoginPage = ({handleAuth}) => {
   const [email, setEmail] = useState("");
+  const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("");
+  const [role, setRole] = useState("student");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    // e.preventDefault();
-    // console.log(email, password, role);
+    e.preventDefault();
+    console.log(email, userId, password, role);
 
-    // try {
-    //   const { data } = await axios.post("http://localhost:4000/api/login", {
-    //     email,
-    //     password,
-    //     role,
-    //   });
+    try {
+      const { data } = await axios.post("https://assignment-portal-server.onrender.com/api/login", {
+        email,
+        userId,
+        password,
+        role,
+      });
 
-    //   if (data) {
-    //     localStorage.setItem("token", data.token);
-    //     console.log(data);
-    //   }
+      if (data) {
+        localStorage.setItem("token", data.token);
+        navigate("/");
+        console.log(data);
+        
 
-    // } catch (error) {
-    //   console.log(error);
+        alert("Logged In Successfully")
+      }
+      handleAuth()
+      console.log('logged In Successfully')
+
+    } catch (error) {
+      console.log(error);
     }
+  }
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center overflow-hidden">
@@ -54,7 +66,7 @@ const LoginPage = () => {
               </span>
               <NavLink
                 className="text-sm bg-blue-600 text-white px-4 rounded-sm py-2"
-                to={"/register"}
+                to={"/signup"}
               >
                 Register
               </NavLink>
@@ -75,6 +87,18 @@ const LoginPage = () => {
                   id="email"
                   placeholder="Example@email.com"
                 />
+                {/* userId  */}
+                <label htmlFor="userId" className="block mb-2 mt-5">
+                  Your ID
+                </label>
+                <input
+                  value={userId}
+                  onChange={(event) => setUserId(event.target.value)}
+                  className="w-full px-4 py-2 mb-2 border border-gray-400 rounded-md"
+                  type="text"
+                  id="userId"
+                  placeholder="Your Id"
+                />
                 <label htmlFor="password" className="block mb-2 mt-5">
                   Password
                 </label>
@@ -94,8 +118,8 @@ const LoginPage = () => {
                     onChange={(event) => setRole(event.target.value)}
                     className="w-full px-4 py-2 mb-2 border border-gray-400 rounded-md"
                   >
-                    <option value="optiona">Faculty</option>
-                    <option value="optionb">Student</option>
+                    <option value="teacher">Faculty</option>
+                    <option value="student">Student</option>
                   </select>
                 </div>
                 <button

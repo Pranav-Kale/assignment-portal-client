@@ -1,86 +1,78 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { UserContext } from "../../../store/userContext";
+import axios from "axios";
+import { Link } from "react-router-dom";
 
-function RecentSubmission() {
-  const [assignments, setAssignments] = useState([]);
+function RecentSubmission({enrolledCourses}) {
+  // const [assignments, setAssignments] = useState([]);
+  // const {user} = useContext(UserContext);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("https://assignment-portal-server.onrender.com/api/assignment?role=teacher");
-        const data = await response.json();
-        setAssignments(data);
-        console.log(data);
-      } catch (error) {
-        console.error("Error getting Assignments : ", error);
-      }
-    };
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const { data } = await axios.post("http://localhost:4000/api/assignment/submittedassignment", {
+  //         studentId: user.studentId
+  //       });
+  
+  //       if (data) {
+  //         console.log(data);
+  //       }
+  //       console.log(data)
+  
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+  //   fetchData();
+  // }, []);
 
-  useEffect(() => {
-    console.log('Assignment ------>',assignments);
-  }, [assignments]);
+  // useEffect(() => {
+  //   // console.log('Assignment ------>',assignments);
+  // }, [assignments]);
+
 
   return (
     <div className="w-full rounded-lg bg-white flex flex-col gap-3 overflow-hidden border shadow-lg ">
       <div className="w-full rounded-lg ">
         <p className="w-full text-center font-bold  text-white p-[15px] bg-[#245DE1] border-b">Recent Submissions</p>
-        <div className="hideScrollbar flex flex-col px-4 gap-3 w-full  rounded-lg overflow-y-scroll h-[300px] sm:h-[450px] xl:h-[620px]">
-          {assignments.map((item) => (
-
-            <div className="w-[95%] flex sm:flex-row flex-wrap justify-between p-2  text-[#245DE1] border-b border-[#245DE1]">
-              <div className="flex flex-col gap-1">
-                <p>Submitted : {item.title}</p>
-                <p>Course : {item.title}</p>
-              </div>
-              <p>Date : Date of Submission</p>
-            </div>
-
-          ))}
-
-
-
-            <div className="w-[95%] flex sm:flex-row flex-wrap justify-between p-2  text-[#245DE1] border-b border-[#245DE1]">
-              <div className="flex flex-col gap-1">
-                <p>Submitted : Item Title</p>
-                <p>Course : Course Name</p>
-              </div>
-              <p>Date : Date of Submission</p>
-            </div>
-
-
-            <div className="w-[95%] flex sm:flex-row flex-wrap justify-between p-2  text-[#245DE1] border-b border-[#245DE1]">
-              <div className="flex flex-col gap-1">
-                <p>Submitted : Item Title</p>
-                <p>Course : Course Name</p>
-              </div>
-              <p>Date : Date of Submission</p>
-            </div>
-
-
-            <div className="w-[95%] flex sm:flex-row flex-wrap justify-between p-2  text-[#245DE1] border-b border-[#245DE1]">
-              <div className="flex flex-col gap-1">
-                <p>Submitted : Item Title</p>
-                <p>Course : Course Name</p>
-              </div>
-              <p>Date : Date of Submission</p>
-            </div>
-
-
-
-
-
-            <div className="w-[95%] flex sm:flex-row flex-wrap justify-between p-2  text-[#245DE1] border-b border-[#245DE1]">
-              <div className="flex flex-col gap-1">
-                <p>Submitted : Item Title</p>
-                <p>Course : Course Name</p>
-              </div>
-              <p>Date : Date of Submission</p>
-            </div>
-
-
-
-
+        <div className="hideScrollbar flex flex-col px-4 gap-3 w-full  rounded-lg overflow-y-scroll h-[300px] sm:h-[450px] xl:h-[590px]">
+            {
+              enrolledCourses.map((course, idx) => (
+                <div>
+                  {/* {
+                    course.assignments.map((assignment, idx) => (
+                      <div className='border-b-2 p-4 border-blue-100'>
+                        <p><span className='text-gray-600'>Subject:</span> <span className='font-bold'>{course.name}</span></p>
+                        <p><span className='text-gray-600'>Title:</span> <span className='font-bold'>{assignment.title}</span></p>
+                        <div className='flex justify-between items-center'>
+                          <Link to={`/submission/uploadPage/${assignment._id}`}><button className='mt-2 text-sm bg-blue-600 hover:bg-blue-400 transition-all rounded-sm'>SUBMIT</button></Link>
+                          <p>Submitted on: <span className='text-green-600'>24th Jan</span></p>
+                        </div>
+                      </div>
+                    ))
+                  } */}
+                  {
+                    course.assignments.map((assignment, idx)=> (
+                      <div>
+                        {
+                          assignment.submissions.map((submission, idx) => (
+                            <div className='border-b-2 p-4 border-blue-100'>
+                            <p><span className='text-gray-600'>Subject:</span> <span className='font-bold'>{course.name}</span></p>
+                            <p><span className='text-gray-600'>Assignment:</span> <span className='font-bold'>{assignment.title}</span></p>
+                            <p><span className='text-gray-600'>Title:</span> <span className='font-bold'>{submission.title}</span></p>
+                            <div className='flex justify-between items-center'>
+                              <a href={submission.file} target="_blank"><button className='mt-2 text-sm bg-blue-600 hover:bg-blue-400 transition-all rounded-sm'>Download</button></a>
+                              <p>Submitted on: <span className='text-green-600'>24th Jan</span></p>
+                            </div>
+                          </div>
+                          ))
+                        }
+                      </div>
+                    ))
+                  }
+                </div>
+              ))
+            }
         </div>
       </div>
     </div>

@@ -1,11 +1,19 @@
-import React,{useState} from 'react';
+import React,{useContext, useState} from 'react';
 import { SlCloudUpload } from "react-icons/sl";
+import { IoMdCloudDone } from "react-icons/io";
+import { UserContext } from '../../../store/userContext';
 
-function UploadPage({setOpenUploadPage}) {
+function UploadPage({courseId}) {
+
+  
+  const {user} = useContext(UserContext);
+  
     
   const [file, setFile] = useState(null);
   const [displayFile, setDisplayFile] = useState(null);
   const [title,setTitle] = useState();
+  const [endDate,setEndDate] = useState("12");
+
   const [isDraggedOver, setIsDraggedOver] = useState(false);
 
   const handleDragOver = (e) => {
@@ -27,10 +35,15 @@ function UploadPage({setOpenUploadPage}) {
       const formData = new FormData();
       formData.append("file", file);
       formData.append("title", title);
+      formData.append("courseId", courseId);
+      formData.append("teacherId", user._id);
+      formData.append("endDate", endDate);
+
+      console.log(title, courseId, user.teacherId, endDate);
   
       try {
         const response = await fetch(
-          "https://assignment-portal-server.onrender.com/api/assignment?role=teacher",
+          "http://localhost:4000/api/assignment?role=teacher",
           {
             method: "POST",
             body: formData,
@@ -50,8 +63,8 @@ function UploadPage({setOpenUploadPage}) {
     
   
     function handleUploadClick () {
+      window.location.reload();
       console.log("Upload Clicked");
-      setOpenUploadPage(false);
     }
 
     console.log("File ----->",file)
@@ -71,7 +84,7 @@ function UploadPage({setOpenUploadPage}) {
           onDragLeave={handleDragLeave}
         >
           <div className="flex flex-col items-center justify-center h-full gap-2">
-            <i className="text-5xl"><SlCloudUpload /></i>
+            <i className="text-5xl">{!file ? <SlCloudUpload /> : <IoMdCloudDone />}</i>
             <div className="text-center">Drag and drop your file here</div>
             <span className="mb-3">OR</span>
             <div className="">
@@ -114,7 +127,7 @@ function UploadPage({setOpenUploadPage}) {
             <div className="h-fit justify-center flex">
               <button
                 className="upload border rounded-md hover:bg-[#0c4adc]"
-                onClick={handleUploadClick}
+                onClick={handleFormSubmit}
                 type="submit"
               >
                 Upload
